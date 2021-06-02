@@ -7,7 +7,9 @@ While schedulecourses.com is out of commission, I thought I'd help out my fellow
 course scheduling needs. This program will find combinations of sections that work together without
 conflicts on your timetable, and present you with the CRNs for easy registration when the time comes.
 
-[See it in action here (YouTube link)](https://youtu.be/BdfHxtnDEm8)
+[See it in action here (YouTube link).](https://youtu.be/BdfHxtnDEm8)
+
+[Get started by downloading the program here.](https://github.com/blerchy/schedule-scraper/releases/)
 
 ## How to use.
 
