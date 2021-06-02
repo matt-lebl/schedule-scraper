@@ -51,6 +51,13 @@ Any programmers out there are welcome to improve the program! It is licensed und
 free software. Feel free to remix and redistribute at your leisure subject to the license. If you make
 a great change, please consider opening a pull request!
 
+## No thank you.
+
+If this program isn't working for you for whatever reason, I can suggest another website to help you
+put together your schedule: [courseup.vikelabs.dev](http://courseup.vikelabs.dev). I don't have a lot
+of experience using it (I didn't even know it existed until I tried to promote this program…) but I've
+read great things about it.
+
 ## Thanks!
 
 I hope this program proves useful to you.
