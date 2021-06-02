@@ -13,8 +13,18 @@ conflicts on your timetable, and present you with the CRNs for easy registration
 
 ## How to use.
 
-Simply download the `schedule_scraper.py` file and run it using Python 3. If you have it installed on
-your system, it should be as simple as
+To run the program, you will need to have Python 3 installed. Then,
+you'll need to download the `schedule_scraper.py` program to your computer, and install a couple dependencies.
+
+```
+$ pip install bs4
+...
+$ pip install requests
+...
+$ python schedule_scraper.py
+```
+
+From there, you'll be able to run the program simply by calling 
 
 ```
 $ python schedule_scraper.py
