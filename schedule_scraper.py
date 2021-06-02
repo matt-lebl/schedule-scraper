@@ -20,14 +20,8 @@ import re
 import datetime
 
 
-class Section:
-	def __init__(self, crn, section_code, course_code, time_range, days, location, instructor):
-		self.crn = crn
-
-		self.section_code = section_code
-
-		self.course_code = course_code
-		
+class SectionMeeting:
+	def __init__(self, time_range, days, location, instructor):
 		# use regex to compute start/end times from format like "2:30 PM - 3:50 PM"
 		time_re = re.compile(r"(\d\d?):(\d\d) ?([apAP])[mM]? ?- ?(\d\d?):(\d\d) ?([apAP])[mM]?")
 		time_match = time_re.match(time_range)
@@ -51,12 +45,8 @@ class Section:
 		
 		self.instructor = instructor
 
-		self.lock = False
-
 	def __str__(self):
-		return "%d %s: %s from %s to %s with %s in %s" % (
-			self.crn,
-			self.section_code,
+		return "%s from %s to %s with %s in %s" % (
 			self.days,
 			self.start_time.strftime(r"%I:%M %p"),
 			self.end_time.strftime(r"%I:%M %p"),
@@ -66,24 +56,50 @@ class Section:
 	
 	def __repr__(self):
 		return str(self)
+		
+
+
+class Section:
+	def __init__(self, crn, section_code, course_code, meetings):
+		self.crn = crn
+
+		self.section_code = section_code
+
+		self.course_code = course_code
+
+		self.meetings = meetings
+
+		self.lock = False
+		
+
+	def __str__(self):
+		s = "%d %s: " % (self.crn, self.section_code)
+		for meeting in self.meetings:
+			s += str(meeting) + ", "
+		return s
+	
+	def __repr__(self):
+		return str(self)
 
 	def compatible_with(self, other_section):
-		# if they occur on different days, then they are compatible. if they share a day, we need
-		# to examine further
-		share_days = False
-		for day in self.days:
-			if day in other_section.days:
-				share_days = True
-		if share_days == False:
-			return True
-	
-		# disqualify if this section starts during the other section
-		if self.start_time >= other_section.start_time and self.start_time <= other_section.end_time:
-			return False
-
-		# disqualify if the other section starts during this section
-		if other_section.start_time >= self.start_time and other_section.start_time <= self.end_time:
-			return False
+		for our_meeting in self.meetings:
+			for their_meeting in other_section.meetings:
+				# if they occur on different days, then they are compatible. if they share a day, we need
+				# to examine further
+				share_days = False
+				for day in our_meeting.days:
+					if day in their_meeting.days:
+						share_days = True
+				if share_days == False:
+					continue
+			
+				# disqualify if this section starts during the other section
+				if our_meeting.start_time >= their_meeting.start_time and our_meeting.start_time <= their_meeting.end_time:
+					return False
+		
+				# disqualify if the other section starts during this section
+				if their_meeting.start_time >= our_meeting.start_time and their_meeting.start_time <= our_meeting.end_time:
+					return False
 
 		# if none of the above, then they are compatible
 		return True
@@ -281,22 +297,25 @@ class CombinedSchedule:
 	def find_earliest_start(self):
 		earliest = datetime.time(hour=23, minute=59)
 		for section in self.sections:
-			if section.start_time < earliest:
-				earliest = section.start_time
+			for meeting in section.meetings:
+				if meeting.start_time < earliest:
+					earliest = meeting.start_time
 		return earliest
 
 	def find_latest_end(self):
 		latest = datetime.time(hour=0, minute=0)
 		for section in self.sections:
-			if section.end_time > latest:
-				latest = section.end_time
+			for meeting in section.meetings:
+				if meeting.end_time > latest:
+					latest = meeting.end_time
 		return latest
 	
 	def count_days_off(self):
 		days_off = "mtwrf"
 		for section in self.sections:
-			for day in section.days:
-				days_off = days_off.replace(day.lower(), '')
+			for meeting in section.meetings:
+				for day in meeting.days:
+					days_off = days_off.replace(day.lower(), '')
 		return len(days_off)
 
 	def print_calendar(self):
@@ -327,8 +346,12 @@ class CombinedSchedule:
 			print("│", end='')
 			for day in "mtwrf":
 				for section in self.sections:
-					if print_schedule_line(day, section, current_time):
-						break
+					for meeting in section.meetings:
+						if print_schedule_line(day, meeting, current_time, section.course_code, section.section_code, section.lock):
+							break
+					else:
+						continue
+					break
 				else:
 					print(" " * 19, end='')
 				print("│", end='')
@@ -338,35 +361,35 @@ class CombinedSchedule:
 
 						
 
-def print_schedule_line(day, section, current_time):
+def print_schedule_line(day, meeting, current_time, course_code, section_code, lock):
 
-	if day.lower() not in section.days.lower():
+	if day.lower() not in meeting.days.lower():
 		return False
 
 	add_ten = lambda x: datetime.time(hour=x.hour, minute=x.minute + 10) if x.minute + 10 < 60 else datetime.time(hour=x.hour + 1, minute=(x.minute+10)%60)
 
-	if current_time <= section.start_time and section.start_time < add_ten(current_time):
+	if current_time <= meeting.start_time and meeting.start_time < add_ten(current_time):
 		print("╭─────────────────╮", end='')
 		return True
-	elif current_time <= section.end_time and section.end_time < add_ten(current_time):
+	elif current_time <= meeting.end_time and meeting.end_time < add_ten(current_time):
 		print("╰─────────────────╯", end='')
 		return True
-	elif section.start_time <= current_time and current_time <= section.end_time:
+	elif meeting.start_time <= current_time and current_time <= meeting.end_time:
 		print("│", end='')
-		if add_ten(section.start_time) >= current_time:
-			heading = " %s %s" % (section.course_code, section.section_code)
+		if add_ten(meeting.start_time) >= current_time:
+			heading = " %s %s" % (course_code, section_code)
 			padding = " " * (17-len(heading))
 			print("%s%s" % (heading, padding), end='')
-		elif add_ten(add_ten(section.start_time)) >= current_time:
-			line = " %s " % section.location[-15:]
+		elif add_ten(add_ten(meeting.start_time)) >= current_time:
+			line = " %s " % meeting.location[-15:]
 			padding = " " * (17-len(line))
 			print("%s%s" % (line, padding), end='')
-		elif add_ten(add_ten(add_ten(section.start_time))) >= current_time:
-			line = " %s " % section.instructor[0:15]
+		elif add_ten(add_ten(add_ten(meeting.start_time))) >= current_time:
+			line = " %s " % meeting.instructor[0:15]
 			padding = " " * (17-len(line))
 			print("%s%s" % (line, padding), end='')
-		elif add_ten(add_ten(add_ten(add_ten(section.start_time)))) >= current_time:
-			if section.lock:
+		elif add_ten(add_ten(add_ten(add_ten(meeting.start_time)))) >= current_time:
+			if lock:
 				print(" (locked)        ", end='')
 			else:
 				print(" " * 17, end='')
@@ -410,15 +433,22 @@ def parse_course_from_url(url):
 					print("a standard course schedule listing page. Sorry!")
 					exit()
 			section_code = m.group(4)
+
+			meetings = []
 	
-			rows = section_table.find_all("td")
-	
-			weeks = rows[0].get_text().strip()
-			time_range = rows[1].get_text().strip()
-			days = rows[2].get_text().strip()
-			location = rows[3].get_text().strip()
-			instructor = re.sub(' +', ' ', rows[6].get_text().strip().replace('\n', ''))
-			sections.append(Section(crn, section_code, course_code, time_range, days, location, instructor))
+			for row in section_table.find_all("tr"):
+				if row.find("th") is not None:
+					continue
+				columns = row.find_all("td")
+				weeks = columns[0].get_text().strip()
+				time_range = columns[1].get_text().strip()
+				days = columns[2].get_text().strip()
+				location = columns[3].get_text().strip()
+				instructor = re.sub(' +', ' ', columns[6].get_text().strip().replace('\n', ''))
+				
+				meetings.append(SectionMeeting(time_range, days, location, instructor))
+
+			sections.append(Section(crn, section_code, course_code, meetings))
 
 	lecture_sections = [section for section in sections if section.section_code.startswith('A')]
 	lab_sections = [x for x in sections if x.section_code.startswith('B')]
