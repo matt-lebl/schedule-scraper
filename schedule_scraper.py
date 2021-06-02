@@ -423,6 +423,9 @@ def parse_course_from_url(url):
 	lecture_sections = [section for section in sections if section.section_code.startswith('A')]
 	lab_sections = [x for x in sections if x.section_code.startswith('B')]
 	tutorial_sections = [x for x in sections if x.section_code.startswith('T')]
+
+	if course_code == None:
+		raise ValueError
 	
 	return CourseOffering(course_title, course_code, lecture_sections, lab_sections, tutorial_sections)
 
@@ -510,7 +513,14 @@ while True:
 	if action.lower().strip() == 'a':
 		url = input("Paste schedule link: ")
 		print()
-		course = parse_course_from_url(url)
+		try:
+			course = parse_course_from_url(url)
+		except:
+			print("There was a problem reading the course information! May you please double check")
+			print("that you're entering a course schedule url? These should point to a white page")
+			print("containing some tables with the section info. Here's an example:")
+			print("https://www.uvic.ca/BAN1P/bwckctlg.p_disp_listcrse?term_in=202109&subj_in=CSC&crse_in=370&schd_in=")
+			continue
 		courses.append(course)
 		print("Added %s: %s. Please ensure the following details are correct." % (course.code, course.title))
 		print_sections(course)
