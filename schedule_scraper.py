@@ -529,7 +529,14 @@ courses = []
 
 print("\n" * 200)
 
+
 while True:
+	print("schedule_scraper.py  Copyright (C) 2021  Matt Lebl")
+	print("This program comes with ABSOLUTELY NO WARRANTY; for details type `warranty'.")
+	print("This is free software, and you are welcome to redistribute it")
+	print("under certain conditions; type `copyright' for details.")
+	print()
+	print()
 	print("Please choose an action.")
 	print("a - add a course, m - manage courses, f - find schedules, e - exit")
 	try:
@@ -540,7 +547,22 @@ while True:
 		exit()
 	print()
 
-	if action.lower().strip() == 'a':
+	if action.lower().strip() == 'warranty':
+		print("There is no warranty for the program, to the extent permitted by applicable law. Except when")
+		print("otherwise stated in writing the copyright holders and/or other parties provide the program")
+		print("\"as is\" without warranty of any kind, either expressed or implied, including, but not limited")
+		print("to, the implied warranties of merchantability and fitness for a particular purpose. The entire")
+		print("risk as to the quality and performance of the program is with you. Should the program prove")
+		print("defective, you assume the cost of all necessary servicing, repair or correction.")
+		print()
+		print("(In essence, this means please double check any schedules you generate before you try to register them!)")
+		print()
+		
+	elif action.lower().strip() == 'copyright':
+		print("This program is free software---you are welcome to distribute it and modify it subject to")
+		print("the terms of the Affero GPL available here: https://www.gnu.org/licenses/agpl-3.0.html")
+		print()
+	elif action.lower().strip() == 'a':
 		url = input("Paste schedule link: ")
 		print()
 		try:
