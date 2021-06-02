@@ -362,7 +362,9 @@ def print_schedule_line(day, section, current_time):
 			padding = " " * (17-len(line))
 			print("%s%s" % (line, padding), end='')
 		elif add_ten(add_ten(add_ten(section.start_time))) >= current_time:
-			print(" %s " % section.instructor[0:15], end='')
+			line = " %s " % section.instructor[0:15]
+			padding = " " * (17-len(line))
+			print("%s%s" % (line, padding), end='')
 		elif add_ten(add_ten(add_ten(add_ten(section.start_time)))) >= current_time:
 			if section.lock:
 				print(" (locked)        ", end='')
