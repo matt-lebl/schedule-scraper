@@ -15,10 +15,11 @@ Simply download the `schedule_scraper.py` file and run it using Python 3. If you
 your system, it should be as simple as
 
 ```
-$ python3 schedule_scraper.py
+$ python schedule_scraper.py
 ```
 
-from wherever you've downloaded it to.
+on the terminal/powershell from wherever you've downloaded it to. If you do not have Python 3 installed, there is a helpful
+guide to doing so [here.](https://realpython.com/installing-python)
 
 The program will then ask you to add some courses. Follow the prompts and happy scheduling!
 
@@ -26,9 +27,10 @@ The program will then ask you to add some courses. Follow the prompts and happy 
 
 Feel free to get in touch with me if you are having issues, but I cannot promise I'll be able to help.
 This was written over the course of three or four bursts of manic typing in the last 48 hours; so there
-are bound to be some bugs. I hope to iron that out over the next few days, but since the program is
-in a useful state as-is, it won't be a priority for me.
+are bound to be some bugs. I hope to iron those out as they are reported, but unfortunately I am
+busy these days so I can't promise speedy fixes.
 
+If you'd like to report any problems, or just drop a line, please email me at [mlebl@uvic.ca](mailto:mlebl@uvic.ca)
 You can also post a ticket on this GitHub page if you like.
 
 ## Contributions welcome.
