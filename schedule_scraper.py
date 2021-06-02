@@ -709,6 +709,11 @@ while True:
 			continue
 		schedules = find_schedules(courses)
 		print("I found %d possible schedules." % len(schedules))
+		if len(schedules) == 0:
+			print("Sorry about that! If you have sections locked, try unlocking them. Also, you can try")
+			print("deactivating some courses to see what schedules you could get if those courses were")
+			print("not included.")
+			continue
 		latest_start_time = datetime.time(hour=0, minute=0)
 		earliest_finish_time = datetime.time(hour=23, minute=59)
 		num_with_dayoff = 0
