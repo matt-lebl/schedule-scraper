@@ -181,6 +181,70 @@ class CourseOffering:
 		self.lecture_locked = False
 		self.lab_locked = False
 		self.tutorial_locked = False
+
+	def toggle_lock_lecture(self, index):
+		if self.lecture_sections[index].lock:
+			self.unlock_lecture()
+		else:
+			self.lock_lecture(index)
+
+	def unlock_lecture(self):
+		self.lecture_locked = False
+		for section in self.lecture_sections:
+			section.lock = False
+
+	def lock_lecture(self, index):
+		self.lecture_locked = True
+		for section in self.lecture_sections:
+			section.lock = False
+		self.lecture_sections[index].lock = True
+
+	def toggle_lock_lab(self, index):
+		if self.lab_sections[index].lock:
+			self.unlock_lab()
+		else:
+			self.lock_lab(index)
+
+	def unlock_lab(self):
+		self.lab_locked = False
+		for section in self.lab_sections:
+			section.lock = False
+
+	def lock_lab(self, index):
+		self.lab_locked = True
+		for section in self.lab_sections:
+			section.lock = False
+		self.lab_sections[index].lock = True
+	
+	def toggle_lock_tutorial(self, index):
+		if self.tutorial_sections[index].lock:
+			self.unlock_tutorial()
+		else:
+			self.lock_tutorial(index)
+
+	def unlock_tutorial(self):
+		self.tutorial_locked = False
+		for section in self.tutorial_sections:
+			section.lock = False
+
+	def lock_tutorial(self, index):
+		self.tutorial_locked = True
+		for section in self.tutorial_sections:
+			section.lock = False
+		self.tutorial_sections[index].lock = True
+
+	def lock_tutorial(self, index):
+		if self.tutorial_sections[index].lock:
+			self.tutorial_locked = False
+			self.tutorial_sections[index].lock = False
+		else:
+			self.tutorial_locked = True
+			for section in self.tutorial_sections:
+				section.lock = False
+			self.tutorial_sections[index].lock = True
+	
+
+
 	
 	def find_self_consistent_combos(self):
 		lecture_sections = []
@@ -698,32 +762,11 @@ while True:
 						selected_section = 0
 					elif action.lower().strip() == 'l':
 						if selected_section < num_lecture_sections:
-							if courses[selected].lecture_sections[selected_section].lock == True:
-								courses[selected].lecture_locked = False
-								courses[selected].lecture_sections[selected_section].lock = False
-							else:
-								courses[selected].lecture_locked = True
-								for section in courses[selected].lecture_sections:
-									section.lock = False
-								courses[selected].lecture_sections[selected_section].lock = True
+							courses[selected].lock_lecture(selected_section)
 						elif selected_section < num_lecture_sections + num_lab_sections:
-							if courses[selected].lab_sections[selected_section - num_lecture_sections].lock == True:
-								courses[selected].lab_locked = False
-								courses[selected].lab_sections[selected_section - num_lecture_sections].lock = False
-							else:
-								courses[selected].lab_locked = True
-								for section in courses[selected].lab_sections:
-									section.lock = False
-								courses[selected].lab_sections[selected_section - num_lecture_sections].lock = True
+							courses[selected].lock_lab(selected_section - num_lecture_sections)
 						elif selected_section < num_lecture_sections + num_lab_sections + num_tutorial_sections:
-							if courses[selected].tutorial_sections[selected_section - num_lecture_sections - num_lab_sections].lock == True:
-								courses[selected].tutorial_locked = False
-								courses[selected].tutorial_sections[selected_section - num_lecture_sections - num_lab_sections].lock = False
-							else:
-								courses[selected].tutorial_locked = True
-								for section in courses[selected].tutorial_sections:
-									section.lock = False
-								courses[selected].tutorial_sections[selected_section - num_lecture_sections - num_lab_sections].lock = True
+							courses[selected].lock_tutorial(selected_section - num_lecture_sections - num_lab_sections)
 					elif action.lower().strip() == 'e':
 						break
 					else:
