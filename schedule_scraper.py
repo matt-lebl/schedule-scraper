@@ -543,6 +543,8 @@ def find_schedules(courses):
 	c = [course for course in courses if course.active == True]
 	for course in c:
 		course.find_self_consistent_combos()
+		if len(course.consistent_combos) < 1:
+			return []
 	possible_schedules = []
 	# number of courses under consideration
 	num = len(c)
