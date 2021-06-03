@@ -70,7 +70,10 @@ class Section:
 		self.meetings = meetings
 
 		self.lock = False
+		self.exclude = False
 		
+	def toggle_exclude(self):
+		self.exclude = not self.exclude
 
 	def __str__(self):
 		s = "%d %s: " % (self.crn, self.section_code)
@@ -254,7 +257,7 @@ class CourseOffering:
 					lecture_sections = [lecture]
 					break
 		else:
-			lecture_sections = self.lecture_sections
+			lecture_sections = [section for section in self.lecture_sections if not section.exclude]
 
 		lab_sections = []
 		if self.lab_locked:
@@ -262,7 +265,7 @@ class CourseOffering:
 				if lab.lock:
 					lab_sections = [lab]
 		else:
-			lab_sections = self.lab_sections
+			lab_sections = [section for section in self.lab_sections if not section.exclude]
 
 		tutorial_sections = []
 		if self.tutorial_locked:
@@ -270,7 +273,7 @@ class CourseOffering:
 				if tutorial.lock:
 					tutorial_sections = [tutorial]
 		else:
-			tutorial_sections = self.tutorial_sections
+			tutorial_sections = [section for section in self.tutorial_sections if not section.exclude]
 
 		consistent_combos = []
 		if not lecture_sections:
@@ -683,10 +686,9 @@ while True:
 				selected_section = 0
 				while True:
 					print("Viewing %s: %s" % (courses[selected].code, courses[selected].title))
-					print("Here is a listing of the sections for this course. You can delete those sections that aren't")
+					print("Here is a listing of the sections for this course. You can exclude those sections that aren't")
 					print("useful to you (perhaps due to an outside obligation or degree restriction) and they will not")
-					print("be considered for schedule planning. Be aware, however, that you can't get a section back without")
-					print("re-importing the course from the internet. Additionally, you can \"lock\" sections, so that")
+					print("be considered for schedule planning. Additionally, you can \"lock\" sections, so that")
 					print("the scheduler will only show schedule options with that particular section. You can only lock")
 					print("one section at a time from each of the lecture, lab, or tutorial components.")
 					num_lecture_sections = len(courses[selected].lecture_sections)
@@ -710,6 +712,8 @@ while True:
 						print(" %s" % str(courses[selected].lecture_sections[i]), end='')
 						if courses[selected].lecture_sections[i].lock:
 							print(" (locked)")
+						elif courses[selected].lecture_sections[i].exclude:
+							print(" (excluded)")
 						else:
 							print()
 					print("Lab sections:")
@@ -722,6 +726,8 @@ while True:
 						print(" %s" % str(courses[selected].lab_sections[i]), end='')
 						if courses[selected].lab_sections[i].lock:
 							print(" (locked)")
+						elif courses[selected].lab_sections[i].exclude:
+							print(" (excluded)")
 						else:
 							print()
 					print("Tutorial sections:")
@@ -734,11 +740,13 @@ while True:
 						print(" %s" % str(courses[selected].tutorial_sections[i]), end = '')
 						if courses[selected].tutorial_sections[i].lock:
 							print(" (locked)")
+						elif courses[selected].tutorial_sections[i].exclude:
+							print(" (excluded)")
 						else:
 							print()
 
 					print()
-					print("d - delete, l - lock, e - exit/back, # - change selected section")
+					print("x - exclude, l - lock, e - exit/back, # - change selected section")
 					try:
 						action = input("> ")
 						print("\n" * 200)
@@ -746,20 +754,13 @@ while True:
 						print("Goodbye")
 						exit()
 
-					if action.lower().strip() == 'd':
+					if action.lower().strip() == 'x':
 						if selected_section < num_lecture_sections:
-							if courses[selected].lecture_sections[selected_section].lock:
-								courses[selected].lecture_locked = False
-							del courses[selected].lecture_sections[selected_section]
+							courses[selected].lecture_sections[selected_section].toggle_exclude()
 						elif selected_section < num_lecture_sections + num_lab_sections:
-							if courses[selected].lab_sections[selected_section - num_lecture_sections].lock:
-								courses[selected].lab_locked = False
-							del courses[selected].lab_sections[selected_section - num_lecture_sections]
+							courses[selected].lab_sections[selected_section - num_lecture_sections].toggle_exclude()
 						elif selected_section < num_lecture_sections + num_lab_sections + num_tutorial_sections:
-							if courses[selected].tutorial_sections[selected_section - num_lecture_sections - num_lab_sections].lock:
-								courses[selected].tutorial_locked = False
-							del courses[selected].tutorial_sections[selected_section - num_lecture_sections - num_lab_sections]
-						selected_section = 0
+							courses[selected].lab_sections[selected_section - num_lecture_sections - num_lab_sections].toggle_exclude()
 					elif action.lower().strip() == 'l':
 						if selected_section < num_lecture_sections:
 							courses[selected].lock_lecture(selected_section)
