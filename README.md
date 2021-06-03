@@ -38,8 +38,7 @@ The program will then ask you to add some courses. Follow the prompts and happy 
 ## Get in touch.
 
 Feel free to get in touch with me if you are having issues, but I cannot promise I'll be able to help.
-This was written over the course of three or four bursts of manic typing in the 48 hours following the
-posting of schedules on May 31, so there
+This was written over the course of three or four bursts of manic typing in the last 48 hours; so there
 are bound to be some bugs. I hope to iron those out as they are reported, but unfortunately I am
 busy these days so I can't promise speedy fixes.
 
@@ -55,7 +54,7 @@ a great change, please consider opening a pull request!
 ## No thank you.
 
 If this program isn't working for you for whatever reason, I can suggest another website to help you
-put together your schedule: [courseup.vikelabs.dev](http://courseup.vikelabs.dev). I don't have a lot
+put together your schedule: [courseup.vikelabs.ca](https://courseup.vikelabs.ca). I don't have a lot
 of experience using it (I didn't even know it existed until I tried to promote this program…) but I've
 read great things about it.
 
