@@ -765,11 +765,11 @@ while True:
 							courses[selected].lab_sections[selected_section - num_lecture_sections - num_lab_sections].toggle_exclude()
 					elif action.lower().strip() == 'l':
 						if selected_section < num_lecture_sections:
-							courses[selected].lock_lecture(selected_section)
+							courses[selected].toggle_lock_lecture(selected_section)
 						elif selected_section < num_lecture_sections + num_lab_sections:
-							courses[selected].lock_lab(selected_section - num_lecture_sections)
+							courses[selected].toggle_lock_lab(selected_section - num_lecture_sections)
 						elif selected_section < num_lecture_sections + num_lab_sections + num_tutorial_sections:
-							courses[selected].lock_tutorial(selected_section - num_lecture_sections - num_lab_sections)
+							courses[selected].toggle_lock_tutorial(selected_section - num_lecture_sections - num_lab_sections)
 					elif action.lower().strip() == 'e':
 						break
 					else:
