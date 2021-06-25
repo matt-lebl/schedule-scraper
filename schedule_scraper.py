@@ -762,7 +762,7 @@ while True:
 						elif selected_section < num_lecture_sections + num_lab_sections:
 							courses[selected].lab_sections[selected_section - num_lecture_sections].toggle_exclude()
 						elif selected_section < num_lecture_sections + num_lab_sections + num_tutorial_sections:
-							courses[selected].lab_sections[selected_section - num_lecture_sections - num_lab_sections].toggle_exclude()
+							courses[selected].tutorial_sections[selected_section - num_lecture_sections - num_lab_sections].toggle_exclude()
 					elif action.lower().strip() == 'l':
 						if selected_section < num_lecture_sections:
 							courses[selected].toggle_lock_lecture(selected_section)
